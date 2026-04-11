@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>게시판</title>
+  <title>게시판 | Sihoo.dev</title>
+  <link rel="stylesheet" href="./style/style.css">
 </head>
 
 <body>
@@ -12,15 +13,79 @@
     <div class="header-container">
       <div class="logo">Sihoo.dev</div>
       <nav class="nav-links">
-        <a href="./board.html">게시판</a>
+        <a href="./board.html" class="active">게시판</a>
         <a href="./index.html">자기소개</a>
-        <a href="./terminal.html" class="active">터미널</a>
+        <a href="./terminal.html">터미널</a>
       </nav>
     </div>
   </header>
+
+  <main class="container">
+
+    <!-- LIST VIEW -->
+    <div id="listView">
+      <div class="board-header">
+        <div class="board-title">게시판 <span id="postCount">// 0 posts</span></div>
+        <button class="btn" onclick="openWriteModal()">+ 글쓰기</button>
+      </div>
+      <div class="post-list" id="postList">
+        <div class="state-msg"><span class="loading-dots">불러오는 중</span></div>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div id="detailView" style="display:none;">
+      <span class="back-btn" onclick="showList()">← 목록으로</span>
+      <div class="post-detail active" id="postDetail">
+        <div class="post-detail-title" id="detailTitle"></div>
+        <div class="post-detail-meta" id="detailMeta"></div>
+        <div class="post-detail-body" id="detailBody"></div>
+        <div class="post-detail-actions">
+          <button class="btn btn-sm" onclick="openEditModal()">수정</button>
+          <button class="btn btn-sm btn-danger" onclick="confirmDelete()">삭제</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
   <footer class="footer">
     <p>© 2026 Sihoo Park. All rights reserved.</p>
   </footer>
+
+  <!-- WRITE / EDIT MODAL -->
+  <div class="modal-overlay" id="writeModal">
+    <div class="modal">
+      <div class="modal-title" id="modalTitle">// 새 글 작성</div>
+      <input type="text" id="postTitleInput" placeholder="제목을 입력하세요..." maxlength="100">
+      <input type="text" id="postAuthorInput" placeholder="작성자 (선택)" maxlength="30">
+      <textarea id="postBodyInput" placeholder="내용을 입력하세요..."></textarea>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">취소</button>
+        <button class="btn" id="submitBtn" onclick="submitPost()">작성</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM DELETE -->
+  <div class="confirm-overlay" id="confirmModal">
+    <div class="confirm-box">
+      <p>정말 삭제하시겠습니까?</p>
+      <div class="confirm-actions">
+        <button class="btn" onclick="closeConfirm()">취소</button>
+        <button class="btn btn-danger" onclick="deletePost()">삭제</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Firebase SDK -->
+  <script type="module" src="./script/board.js">
+
+  </script>
 </body>
 
 </html>
