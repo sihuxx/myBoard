@@ -114,6 +114,35 @@ h1 { color: #00ff88; width: 100%; font-weight: bold; font-size: 25px; margin-bot
 .confirm-box p { margin-bottom: 20px; color: #ff8888; }
 .confirm-actions { display: flex; gap: 10px; justify-content: center; }
 
+/* ── HEADER USER (board.html / 로그인 상태) ── */
+.header-user { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; }
+.user-email { color: #006633; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.logout-btn { background: transparent; border: 1px solid #ff4444; color: #ff4444; padding: 4px 10px; cursor: pointer; font-family: 'D2Coding', monospace; font-size: 0.8rem; transition: all 0.2s; }
+.logout-btn:hover { background: #ff4444; color: #000; }
+.login-link { color: #008844; font-size: 0.85rem; transition: all 0.2s; border: 1px solid #008844; padding: 4px 10px; }
+.login-link:hover { color: #00ff88; border-color: #00ff88; }
+
+/* ── AUTH (login.html) ── */
+.auth-container { min-height: calc(100vh - 140px); display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+.auth-box { width: 100%; max-width: 420px; border: 1px solid #00ff88; padding: 40px; box-shadow: 0 0 30px rgba(0,255,136,0.15); animation: fadeIn 0.3s ease; }
+.auth-tabs { display: flex; margin-bottom: 30px; border-bottom: 1px dashed #00ff88; }
+.auth-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; color: #008844; font-size: 1rem; transition: all 0.2s; background: transparent; border: none; font-family: 'D2Coding', monospace; }
+.auth-tab.active { color: #00ff88; text-shadow: 0 0 8px #00ff88; border-bottom: 2px solid #00ff88; }
+.auth-form { display: flex; flex-direction: column; gap: 15px; }
+.auth-form.hidden { display: none; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 0.85rem; color: #008844; }
+.form-input { background: transparent; border: 1px solid #00ff88; color: #00ff88; padding: 10px 14px; font-family: 'D2Coding', monospace; font-size: 1rem; transition: all 0.2s; }
+.form-input::placeholder { color: #004422; }
+.form-input:focus { outline: none; box-shadow: 0 0 8px rgba(0,255,136,0.4); }
+.auth-btn { background: transparent; border: 1px solid #00ff88; color: #00ff88; padding: 12px; cursor: pointer; font-family: 'D2Coding', monospace; font-size: 1rem; transition: all 0.2s; margin-top: 5px; }
+.auth-btn:hover { background: #00ff88; color: #000; box-shadow: 0 0 15px #00ff88; }
+.auth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.auth-error { color: #ff4444; font-size: 0.85rem; text-shadow: none; min-height: 20px; }
+.auth-success { color: #00ff88; font-size: 0.85rem; min-height: 20px; }
+.auth-title { font-size: 1.4rem; margin-bottom: 6px; text-shadow: 0 0 8px #00ff88; }
+.auth-subtitle { font-size: 0.85rem; color: #006633; margin-bottom: 24px; }
+
 /* ── FOOTER ── */
 .footer { text-align: center; padding: 30px; color: #008844; font-size: 0.9rem; border-top: 1px dashed #00ff88; margin-top: 50px; }
 

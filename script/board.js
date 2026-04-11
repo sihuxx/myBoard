@@ -1,15 +1,15 @@
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import {
       getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc,
-      query, orderBy, serverTimestamp, Timestamp
+      query, orderBy, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import {
+      getAuth, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    // =============================================
-    // 🔥 여기에 Firebase 프로젝트 설정을 입력하세요!
-    // Firebase Console > 프로젝트 설정 > 앱 추가 > 웹
-    // =============================================
+    // 🔥 Firebase config
     const firebaseConfig = {
-  apiKey: "AIzaSyBByCMlfqAZMzSOYlvEGm7Rd6aXXeByjwY",
+apiKey: "AIzaSyBByCMlfqAZMzSOYlvEGm7Rd6aXXeByjwY",
   authDomain: "terminal-2340c.firebaseapp.com",
   databaseURL: "https://terminal-2340c-default-rtdb.firebaseio.com",
   projectId: "terminal-2340c",
@@ -21,20 +21,40 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
     const postsCol = collection(db, "posts");
 
-    // =============================================
-    // STATE
-    // =============================================
+    // ── STATE ─────────────────────────────────────────────
     let posts = [];
     let currentPost = null;
     let editMode = false;
+    let currentUser = null;
     const PER_PAGE = 10;
     let currentPage = 1;
 
-    // =============================================
-    // UTILS
-    // =============================================
+    // ── AUTH 상태 감지 ─────────────────────────────────────
+    onAuthStateChanged(auth, user => {
+      currentUser = user;
+      renderHeaderUser(user);
+    });
+
+    function renderHeaderUser(user) {
+      const el = document.getElementById("headerUser");
+      if (user) {
+        el.innerHTML = `
+          <span class="user-email">> ${user.email}</span>
+          <button class="logout-btn" id="logoutBtn">로그아웃</button>
+        `;
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+          await signOut(auth);
+          showToast("로그아웃 되었습니다.");
+        });
+      } else {
+        el.innerHTML = `<a href="./login.html" class="login-link">로그인</a>`;
+      }
+    }
+
+    // ── UTILS ─────────────────────────────────────────────
     function showToast(msg) {
       const t = document.getElementById("toast");
       t.textContent = msg;
@@ -45,19 +65,21 @@
     function formatDate(ts) {
       if (!ts) return "";
       const d = ts.toDate ? ts.toDate() : new Date(ts);
-      return d.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+      return d.toLocaleDateString("ko-KR", { year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit" });
     }
 
-    // =============================================
-    // LOAD POSTS
-    // =============================================
+    function escapeHtml(str = "") {
+      return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
+
+    // ── LOAD POSTS ────────────────────────────────────────
     async function loadPosts() {
       try {
         const q = query(postsCol, orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
         posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderList();
-      } catch (e) {
+      } catch(e) {
         document.getElementById("postList").innerHTML =
           `<div class="state-msg">🔥 Firebase 설정을 확인해주세요.<br><small style="color:#ff4444">${e.message}</small></div>`;
       }
@@ -65,8 +87,7 @@
 
     function renderList() {
       const list = document.getElementById("postList");
-      const count = document.getElementById("postCount");
-      count.textContent = `// ${posts.length} posts`;
+      document.getElementById("postCount").textContent = `// ${posts.length} posts`;
 
       if (posts.length === 0) {
         list.innerHTML = `<div class="state-msg">아직 게시글이 없습니다.<br><small>첫 글을 작성해보세요!</small></div>`;
@@ -77,7 +98,7 @@
       const start = (currentPage - 1) * PER_PAGE;
       const pagePosts = posts.slice(start, start + PER_PAGE);
 
-      list.innerHTML = pagePosts.map((p, i) => `
+      list.innerHTML = pagePosts.map(p => `
         <div class="post-item" onclick="showDetail('${p.id}')">
           <div class="post-item-left">
             <div class="post-item-title">${escapeHtml(p.title)}</div>
@@ -103,48 +124,43 @@
       document.getElementById("pagination").innerHTML = html;
     }
 
-    window.goPage = function (p) { currentPage = p; renderList(); };
+    window.goPage = p => { currentPage = p; renderList(); };
 
-    // =============================================
-    // DETAIL
-    // =============================================
-    window.showDetail = function (id) {
+    // ── DETAIL ────────────────────────────────────────────
+    window.showDetail = function(id) {
       currentPost = posts.find(p => p.id === id);
       if (!currentPost) return;
       document.getElementById("detailTitle").textContent = currentPost.title;
       document.getElementById("detailMeta").textContent =
-        `${currentPost.author || "익명"} · ${formatDate(currentPost.createdAt)}`;
+        `${currentPost.author || "익명"} · ${formatDate(currentPost.createdAt)}` +
+        (currentPost.userEmail ? `  [${currentPost.userEmail}]` : "");
       document.getElementById("detailBody").textContent = currentPost.body;
       document.getElementById("listView").style.display = "none";
       document.getElementById("detailView").style.display = "block";
     };
 
-    window.showList = function () {
+    window.showList = function() {
       currentPost = null;
       document.getElementById("detailView").style.display = "none";
       document.getElementById("listView").style.display = "block";
     };
 
-    // =============================================
-    // WRITE MODAL
-    // =============================================
-    window.openWriteModal = function () {
+    // ── WRITE MODAL ───────────────────────────────────────
+    window.openWriteModal = function() {
       editMode = false;
       document.getElementById("modalTitle").textContent = "// 새 글 작성";
       document.getElementById("submitBtn").textContent = "작성";
       document.getElementById("postTitleInput").value = "";
-      document.getElementById("postAuthorInput").value = "";
+      // 로그인 상태면 작성자 자동 입력
+      document.getElementById("postAuthorInput").value = currentUser ? currentUser.email.split("@")[0] : "";
       document.getElementById("postBodyInput").value = "";
       document.getElementById("writeModal").classList.add("active");
       document.getElementById("postTitleInput").focus();
     };
 
-    window.openEditModal = function () {
-      if (!currentPost) return;
-      openEditModalById(currentPost.id);
-    };
+    window.openEditModal = () => currentPost && openEditModalById(currentPost.id);
 
-    window.openEditModalById = function (id) {
+    window.openEditModalById = function(id) {
       const p = posts.find(x => x.id === id);
       if (!p) return;
       currentPost = p;
@@ -158,16 +174,14 @@
       document.getElementById("postTitleInput").focus();
     };
 
-    window.closeModal = function () {
-      document.getElementById("writeModal").classList.remove("active");
-    };
+    window.closeModal = () => document.getElementById("writeModal").classList.remove("active");
 
-    window.submitPost = async function () {
+    window.submitPost = async function() {
       const title = document.getElementById("postTitleInput").value.trim();
       const author = document.getElementById("postAuthorInput").value.trim();
       const body = document.getElementById("postBodyInput").value.trim();
       if (!title) { showToast("제목을 입력해주세요."); return; }
-      if (!body) { showToast("내용을 입력해주세요."); return; }
+      if (!body)  { showToast("내용을 입력해주세요.");  return; }
 
       const btn = document.getElementById("submitBtn");
       btn.disabled = true;
@@ -176,20 +190,23 @@
       try {
         if (editMode && currentPost) {
           await updateDoc(doc(db, "posts", currentPost.id), { title, author, body });
-          showToast("글이 수정되었습니다.");
-          // detail view update
+          showToast("수정되었습니다.");
           currentPost = { ...currentPost, title, author, body };
           document.getElementById("detailTitle").textContent = title;
-          document.getElementById("detailMeta").textContent =
-            `${author || "익명"} · ${formatDate(currentPost.createdAt)}`;
           document.getElementById("detailBody").textContent = body;
         } else {
-          await addDoc(postsCol, { title, author, body, createdAt: serverTimestamp() });
-          showToast("글이 작성되었습니다.");
+          await addDoc(postsCol, {
+            title, author, body,
+            createdAt: serverTimestamp(),
+            // 로그인 상태면 uid/email 함께 저장
+            uid: currentUser ? currentUser.uid : null,
+            userEmail: currentUser ? currentUser.email : null,
+          });
+          showToast("작성되었습니다.");
         }
         closeModal();
         await loadPosts();
-      } catch (e) {
+      } catch(e) {
         showToast("오류: " + e.message);
       } finally {
         btn.disabled = false;
@@ -197,52 +214,33 @@
       }
     };
 
-    // =============================================
-    // DELETE
-    // =============================================
-    window.confirmDelete = function () {
-      document.getElementById("confirmModal").classList.add("active");
-    };
+    // ── DELETE ────────────────────────────────────────────
+    window.confirmDelete = () => document.getElementById("confirmModal").classList.add("active");
 
-    window.confirmDeleteById = function (id) {
+    window.confirmDeleteById = function(id) {
       currentPost = posts.find(p => p.id === id);
       document.getElementById("confirmModal").classList.add("active");
     };
 
-    window.closeConfirm = function () {
-      document.getElementById("confirmModal").classList.remove("active");
-    };
+    window.closeConfirm = () => document.getElementById("confirmModal").classList.remove("active");
 
-    window.deletePost = async function () {
+    window.deletePost = async function() {
       if (!currentPost) return;
       try {
         await deleteDoc(doc(db, "posts", currentPost.id));
         showToast("삭제되었습니다.");
         closeConfirm();
-        if (document.getElementById("detailView").style.display !== "none") {
-          showList();
-        }
+        if (document.getElementById("detailView").style.display !== "none") showList();
         await loadPosts();
-      } catch (e) {
+      } catch(e) {
         showToast("삭제 실패: " + e.message);
       }
     };
 
-    // =============================================
-    // XSS 방지
-    // =============================================
-    function escapeHtml(str = "") {
-      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    }
-
-    // =============================================
-    // ESC 키로 모달 닫기
-    // =============================================
+    // ── ESC 닫기 ──────────────────────────────────────────
     document.addEventListener("keydown", e => {
       if (e.key === "Escape") { closeModal(); closeConfirm(); }
     });
 
-    // =============================================
-    // INIT
-    // =============================================
+    // ── INIT ──────────────────────────────────────────────
     loadPosts();

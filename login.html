@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인 | Sihoo.dev</title>
+  <link rel="stylesheet" href="./style/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">Sihoo.dev</div>
+      <nav class="nav-links">
+        <a href="./board.html">게시판</a>
+        <a href="./index.html">자기소개</a>
+        <a href="./terminal.html">터미널</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="auth-container">
+    <div class="auth-box">
+      <div class="auth-title">// 계정 접속</div>
+      <div class="auth-subtitle">Sihoo.dev에 로그인하거나 회원가입하세요.</div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">로그인</button>
+        <button class="auth-tab" onclick="switchTab('signup')">회원가입</button>
+      </div>
+
+      <!-- 로그인 폼 -->
+      <div class="auth-form" id="loginForm">
+        <div class="form-group">
+          <label class="form-label">> 이메일</label>
+          <input class="form-input" type="email" id="loginEmail" placeholder="example@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">> 비밀번호</label>
+          <input class="form-input" type="password" id="loginPassword" placeholder="비밀번호 입력">
+        </div>
+        <div class="auth-error" id="loginError"></div>
+        <button class="auth-btn" id="loginBtn" onclick="handleLogin()">로그인</button>
+      </div>
+
+      <!-- 회원가입 폼 -->
+      <div class="auth-form hidden" id="signupForm">
+        <div class="form-group">
+          <label class="form-label">> 이메일</label>
+          <input class="form-input" type="email" id="signupEmail" placeholder="example@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">> 비밀번호 (6자 이상)</label>
+          <input class="form-input" type="password" id="signupPassword" placeholder="비밀번호 입력">
+        </div>
+        <div class="form-group">
+          <label class="form-label">> 비밀번호 확인</label>
+          <input class="form-input" type="password" id="signupPasswordConfirm" placeholder="비밀번호 재입력">
+        </div>
+        <div class="auth-error" id="signupError"></div>
+        <div class="auth-success" id="signupSuccess"></div>
+        <button class="auth-btn" id="signupBtn" onclick="handleSignup()">회원가입</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2026 Sihoo Park. All rights reserved.</p>
+  </footer>
+
+  <script type="module" src="./script/auth.js">
+    
+  </script>
+</body>
+</html>
