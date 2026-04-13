@@ -6,6 +6,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>박시후 | 프론트엔드 개발자</title>
     <link rel="stylesheet" href="./style/style.css">
+    <style>
+        /* GitHub Stats 섹션 */
+        .github-stats { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+        .github-stats-row { display: flex; gap: 20px; flex-wrap: wrap; }
+        .github-card {
+            border: 1px solid #00ff88;
+            padding: 4px;
+            box-shadow: inset 0 0 10px rgba(0,255,136,0.1);
+            transition: all 0.3s;
+            overflow: hidden;
+            background: transparent;
+        }
+        .github-card:hover {
+            box-shadow: 0 0 15px rgba(0,255,136,0.3), inset 0 0 15px rgba(0,255,136,0.2);
+        }
+        .github-card img {
+            display: block;
+            width: 100%;
+            height: auto;
+            filter: hue-rotate(0deg);
+        }
+        .github-card-wide { width: 100%; }
+        .github-card-half { flex: 1; min-width: 280px; }
+
+        /* 로딩 shimmer */
+        .github-card.loading {
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(0,255,136,0.03) 0px,
+                rgba(0,255,136,0.07) 40px,
+                rgba(0,255,136,0.03) 80px
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            min-height: 120px;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
 </head>
 
 <body>
@@ -14,12 +55,12 @@
           <div class="logo">Sihoo.dev</div>
           <nav class="nav-links">
             <a href="./board.html">게시판</a>
-            <a href="./study.html">공부</a>
             <a href="./index.html" class="active">자기소개</a>
             <a href="./terminal.html">터미널</a>
+            <a href="./study.html" >공부 게시판</a>
           </nav>
           <div class="header-user" id="headerUser">
-            <a href="./login.html" class="login-link">로그인</a>
+            <a href="./login.html" class="login-link ">로그인</a>
           </div>
         </div>
       </header>
@@ -36,7 +77,6 @@
         <section class="section">
             <h2 class="section-title">Projects & Awards</h2>
             <div class="project-grid">
-                
                 <div class="card">
                     <h3>Personal Hub (Terminal)</h3>
                     <p>실제 터미널(CLI) 환경과 동일한 사용자 경험을 제공하는 인터랙티브 웹 포트폴리오입니다.</p>
@@ -46,7 +86,6 @@
                         <span>Vanilla JS</span>
                     </div>
                 </div>
-
                 <div class="card">
                     <h3>🏆 2025 해커톤 동상</h3>
                     <p>팀 프로젝트로 참여하여 기획 및 프론트엔드 개발을 담당하였고, 우수한 성과로 동상을 수상했습니다.</p>
@@ -56,7 +95,6 @@
                         <span>JavaScript</span>
                     </div>
                 </div>
-
                 <div class="card">
                     <h3>🏆 2025 웹&앱 경진대회 장려상</h3>
                     <p>React.js를 활용하여 동적인 UI/UX를 갖춘 웹 애플리케이션을 개발해 장려상을 수상했습니다.</p>
@@ -64,7 +102,6 @@
                         <span>React.js</span>
                     </div>
                 </div>
-
                 <div class="card">
                     <h3>🏆 2025 포트폴리오 경진대회 장려상</h3>
                     <p>개발자로서의 역량과 개성을 담은 포트폴리오를 기획 및 구현하여 장려상을 수상했습니다.</p>
@@ -73,7 +110,6 @@
                         <span>UI/UX</span>
                     </div>
                 </div>
-
                 <div class="card">
                     <h3>🚀 현대 제로원(ZER01NE) 참여</h3>
                     <p>현대자동차그룹의 오픈이노베이션 플랫폼 제로원 프로그램에 참여하여 창의적인 활동과 협업을 경험했습니다.</p>
@@ -82,7 +118,6 @@
                         <span>Project</span>
                     </div>
                 </div>
-
             </div>
         </section>
 
@@ -119,6 +154,38 @@
             </div>
         </section>
 
+        <!-- ── GitHub Stats 섹션 ── -->
+        <section class="section">
+            <h2 class="section-title">GitHub Activity</h2>
+            <div class="github-stats">
+
+                <!-- 잔디 (Contribution Graph) -->
+                <div class="github-card github-card-wide loading" id="grassCard">
+                    <img
+                        src="https://ghchart.rshah.org/00ff88/sihuxx"
+                        alt="GitHub 잔디"
+                        onload="this.parentElement.classList.remove('loading')"
+                        onerror="this.parentElement.innerHTML='<div style=\'padding:20px;color:#006633;font-size:0.85rem\'>잔디를 불러오지 못했습니다.</div>'"
+                    >
+                </div>
+
+                <!-- Stats 카드 두 개 나란히 -->
+                <div class="github-stats-row">
+                    <div class="skill-category">
+                        <h3>Tech</h3>
+                        <div class="tags">
+                            <img src="https://img.shields.io/badge/PHP-00ff88?style=for-the-badge&logo=php&logoColor=000000" alt="PHP">
+                            <img src="https://img.shields.io/badge/React-00ff88?style=for-the-badge&logo=react&logoColor=000000" alt="React">
+                            <img src="https://img.shields.io/badge/HTML5-00ff88?style=for-the-badge&logo=html5&logoColor=000000" alt="HTML5">
+                            <img src="https://img.shields.io/badge/CSS3-00ff88?style=for-the-badge&logo=css3&logoColor=000000" alt="CSS3">
+                            <img src="https://img.shields.io/badge/JavaScript-00ff88?style=for-the-badge&logo=javascript&logoColor=000000" alt="JavaScript">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
         <section class="section contact">
             <h2 class="section-title">Contact</h2>
             <div class="contact-links">
@@ -132,5 +199,6 @@
         <p>© 2026 Sihoo Park. All rights reserved.</p>
     </footer>
 </body>
+<script type="module" src="./script/nav.js"></script>
 
 </html>
